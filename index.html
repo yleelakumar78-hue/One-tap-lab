@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONE TAP LAB | Free Fire</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#090b12;color:white;
+ font-family:Arial,sans-serif;padding:16px
+}
+header{text-align:center;padding:24px 5px}
+h1{font-size:36px;color:#ff414b;margin:5px}
+header p{color:#aaa}
+.card{
+ background:#171b28;border:1px solid #34394a;
+ border-radius:16px;padding:20px;
+ margin:18px auto;max-width:550px
+}
+h2{color:#ff555d}
+label{display:block;margin:14px 0 7px}
+input,select{
+ width:100%;padding:13px;background:#090d17;
+ color:white;border:1px solid #454b60;
+ border-radius:9px;font-size:16px
+}
+button{
+ background:#ff414b;color:white;border:0;
+ padding:14px;border-radius:9px;
+ font-weight:bold;width:100%;margin-top:15px;
+ font-size:16px;cursor:pointer
+}
+.secondary{background:#34394a}
+.result{
+ display:none;background:#171b28;
+ border:1px solid #454b60;padding:16px;
+ border-radius:12px;margin:16px auto;
+ max-width:550px
+}
+.values{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px
+}
+.value{
+ background:#252b3b;padding:14px;
+ text-align:center;border-radius:10px
+}
+.value b{
+ display:block;color:#ff555d;
+ font-size:25px;margin-top:8px
+}
+.small{font-size:12px;color:#aaa;line-height:1.6}
+.number{color:#ff555d;font-size:30px;font-weight:bold}
+footer{text-align:center;color:#888;margin:30px 0}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>ONE TAP LAB</h1>
+<p>🔥 UNIVERSAL FREE FIRE SETTINGS 🔥</p>
+<p>Enter your device details and generate your settings</p>
+</header>
+
+<div class="card">
+<h2>📱 YOUR DEVICE DETAILS</h2>
+
+<label>Phone Brand</label>
+<select id="brand">
+<option value="Samsung">Samsung</option>
+<option value="Vivo">Vivo</option>
+<option value="Oppo">Oppo</option>
+<option value="Realme">Realme</option>
+<option value="Redmi">Redmi / Xiaomi</option>
+<option value="iQOO">iQOO</option>
+<option value="OnePlus">OnePlus</option>
+<option value="Motorola">Motorola</option>
+<option value="Infinix">Infinix</option>
+<option value="Tecno">Tecno</option>
+<option value="Apple">Apple</option>
+<option value="Other">Other</option>
+</select>
+
+<label>Exact Phone Model</label>
+<input id="model" placeholder="Example: Samsung M14, Vivo Y51 Pro">
+
+<label>RAM</label>
+<select id="ram">
+<option value="2">2 GB</option>
+<option value="3">3 GB</option>
+<option value="4" selected>4 GB</option>
+<option value="6">6 GB</option>
+<option value="8">8 GB</option>
+<option value="12">12 GB</option>
+<option value="16">16 GB or more</option>
+</select>
+
+<label>Refresh Rate</label>
+<select id="hz">
+<option value="60">60 Hz</option>
+<option value="90">90 Hz</option>
+<option value="120">120 Hz</option>
+<option value="144">144 Hz or more</option>
+</select>
+
+<label>Finger Controls</label>
+<select id="fingers">
+<option value="2">2 Finger</option>
+<option value="3">3 Finger</option>
+<option value="4">4 Finger</option>
+<option value="5">5 Finger</option>
+</select>
+
+<label>Gameplay Style</label>
+<select id="style">
+<option value="headshot">Drag Headshot</option>
+<option value="one">One Tap</option>
+<option value="rush">Rush Gameplay</option>
+<option value="balanced">Balanced</option>
+</select>
+
+<label>Game Version</label>
+<select id="game">
+<option>Free Fire</option>
+<option>Free Fire MAX</option>
+</select>
+
+<label>Current Phone DPI (optional)</label>
+<input type="number" id="dpi" placeholder="Example: 420">
+
+<button onclick="generate()">GENERATE MY SETTINGS 🔥</button>
+</div>
+
+<div class="result" id="output">
+
+<h2>🎮 YOUR DEVICE PROFILE</h2>
+<p id="profile"></p>
+
+<h2>1. 🎯 SENSITIVITY SETTINGS</h2>
+<div class="values" id="sens"></div>
+<button class="secondary" onclick="copySens()">COPY SENSITIVITY</button>
+
+<hr style="border-color:#34394a;margin:22px 0">
+
+<h2>2. 📲 DPI RECOMMENDATION</h2>
+<div id="dpiOutput"></div>
+<button class="secondary" onclick="copyDpi()">COPY DPI</button>
+
+<hr style="border-color:#34394a;margin:22px 0">
+
+<h2>3. 🔥 FIRE BUTTON SIZE</h2>
+<div class="value">
+Fire Button Size
+<b id="fire"></b>
+</div>
+<p class="small">Adjust this percentage in your game's Custom HUD. Test for comfort.</p>
+<button class="secondary" onclick="copyFire()">COPY BUTTON SIZE</button>
+
+<button onclick="copyAll()">COPY ALL SETTINGS</button>
+
+<p class="small">
+These are estimated starting recommendations, not guaranteed headshot settings. Test in Training Ground and adjust according to your aim.
+</p>
+</div>
+
+<footer>
+ONE TAP LAB © 2026
+<p>Made for Free Fire players ❤️</p>
+</footer>
+
+<script>
+let settings={};
+let dpiText="";
+
+function generate(){
+
+ const brand=document.getElementById("brand").value;
+ const model=document.getElementById("model").value.trim();
+ const ram=Number(document.getElementById("ram").value);
+ const hz=Number(document.getElementById("hz").value);
+ const fingers=Number(document.getElementById("fingers").value);
+ const style=document.getElementById("style").value;
+ const game=document.getElementById("game").value;
+ const currentDpi=Number(document.getElementById("dpi").value);
+
+ if(!model){
+  alert("Please enter your exact phone model!");
+  return;
+ }
+
+ if(currentDpi && (currentDpi<100 || currentDpi>1000)){
+  alert("Please enter a valid current DPI between 100 and 1000.");
+  return;
+ }
+
+ // Starting profiles on the 0-200 scale
+ const profiles={
+  headshot:[185,180,165,145,95,130],
+  one:[180,175,160,140,90,125],
+  rush:[190,185,175,155,105,145],
+  balanced:[165,160,145,125,80,110]
+ };
+
+ let values=profiles[style].slice();
+
+ // Conservative device-based adjustment
+ let adjustment=0;
+ if(ram<=3) adjustment=-5;
+ else if(ram>=8) adjustment=0;
+
+ if(hz>=120) adjustment-=2;
+
+ values=values.map((v,i)=>
+  Math.max(0,Math.min(200,v+adjustment))
+ );
+
+ const names=[
+  "General","Red Dot","2X Scope",
+  "4X Scope","Sniper Scope","Free Look"
+ ];
+
+ settings={};
+
+ let html="";
+ names.forEach((name,i)=>{
+  settings[name]=values[i];
+  html+=`
+   <div class="value">
+   ${name}
+   <b>${values[i]}</b>
+   </div>`;
+ });
+
+ document.getElementById("sens").innerHTML=html;
+
+ document.getElementById("profile").innerHTML=
+ `${brand} ${model}<br>
+ ${ram} GB RAM | ${hz} Hz<br>
+ ${fingers} Finger | ${style.toUpperCase()}<br>
+ ${game}`;
+
+ // DPI recommendation
+ if(currentDpi){
+  dpiText="Current DPI: "+currentDpi+
+  ". Suggested safe test range: "+
+  Math.max(100,currentDpi-10)+" to "+
+  Math.min(1000,currentDpi+10)+
+  ". Keep original DPI saved.";
+  document.getElementById("dpiOutput").innerHTML=`
+   <p>Current DPI</p>
+   <div class="number">${currentDpi}</div>
+   <p>Optional small test range</p>
+   <div class="number">
+   ${Math.max(100,currentDpi-10)} - ${Math.min(1000,currentDpi+10)}
+   </div>`;
+ }else{
+  dpiText="Keep your phone's default DPI. Enter current DPI to calculate a small test range.";
+  document.getElementById("dpiOutput").innerHTML=`
+   <div class="number">DEFAULT DPI</div>
+   <p>Keep your phone's original display density. Enter your current DPI above for a personalized test range.</p>`;
+ }
+
+ // Fire button starting size
+ let fireSizes={2:52,3:48,4:44,5:40};
+ let fire=fireSizes[fingers];
+
+ if(style==="rush")fire+=3;
+ if(style==="one")fire-=2;
+
+ fire=Math.max(30,Math.min(70,fire));
+
+ document.getElementById("fire").textContent=fire+"%";
+
+ settings.fire=fire;
+ document.getElementById("output").style.display="block";
+
+ document.getElementById("output").scrollIntoView({
+  behavior:"smooth"
+ });
+}
+
+function copy(text){
+ if(navigator.clipboard && window.isSecureContext){
+  navigator.clipboard.writeText(text)
+   .then(()=>alert("Copied successfully!"))
+   .catch(()=>fallbackCopy(text));
+ }else{
+  fallbackCopy(text);
+ }
+}
+
+function fallbackCopy(text){
+ const area=document.createElement("textarea");
+ area.value=text;
+ document.body.appendChild(area);
+ area.select();
+ document.execCommand("copy");
+ area.remove();
+ alert("Copied successfully!");
+}
+
+function copySens(){
+ let t="ONE TAP LAB - SENSITIVITY\n";
+ for(let key in settings){
+  if(key!=="fire")t+=key+": "+settings[key]+"\n";
+ }
+ copy(t);
+}
+
+function copyDpi(){copy("ONE TAP LAB - DPI\n"+dpiText);}
+function copyFire(){copy("Fire Button Size: "+settings.fire+"%");}
+
+function copyAll(){
+ let t="ONE TAP LAB - FREE FIRE SETTINGS\n\n";
+ for(let key in settings)t+=key+": "+settings[key]+(key==="fire"?"%":"")+"\n";
+ t+="\n"+dpiText;
+ copy(t);
+}
+</script>
+</body>
+</html>
