@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ONE TAP LAB</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b12;color:white;font-family:Arial,sans-serif;padding:20px}
+header{text-align:center;padding:25px 0}
+h1{font-size:36px;color:#ff414b;margin:5px}
+p{color:#aaa}
+.card{background:#171b28;border:1px solid #34394a;border-radius:16px;padding:20px;margin:18px auto;max-width:550px}
+h2{color:#ff555d}
+label{display:block;margin-top:14px;margin-bottom:7px}
+input,select{width:100%;padding:13px;background:#090d17;color:white;border:1px solid #454b60;border-radius:9px;font-size:16px}
+button{background:#ff414b;color:white;border:0;padding:14px;border-radius:9px;font-weight:bold;width:100%;margin-top:18px;font-size:16px}
+.result{display:none}
+.values{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.value{background:#252b3b;padding:15px;text-align:center;border-radius:10px}
+.value b{display:block;color:#ff555d;font-size:27px;margin-top:5px}
+.note{font-size:13px;line-height:1.6}
+footer{text-align:center;color:#888;margin-top:30px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>ONE TAP LAB</h1>
+<p>FREE FIRE HEADSHOT SENSITIVITY</p>
+</header>
+
+<div class="card">
+<h2>🎯 Sensitivity Generator</h2>
+<label>Phone Model</label>
+<input id="phone" placeholder="Enter your phone model">
+<label>RAM</label>
+<select id="ram">
+<option>3 GB</option><option>4 GB</option>
+<option selected>6 GB</option><option>8 GB</option>
+<option>12 GB</option>
+</select>
+<label>Play Style</label>
+<select id="style">
+<option value="fast">Fast Headshots</option>
+<option value="balanced" selected>Balanced</option>
+<option value="steady">Steady Aim</option>
+</select>
+<button onclick="generate()">GENERATE SETTINGS</button>
+</div>
+
+<div class="card result" id="result">
+<h2>🔥 YOUR SETTINGS</h2>
+<div id="device"></div>
+<div class="values" id="values"></div>
+<button onclick="copySettings()">COPY SETTINGS</button>
+<p class="note">These are starting suggestions, not guaranteed headshot settings. Test in training mode and adjust according to your aim.</p>
+</div>
+
+<div class="card">
+<h2>🎮 Headshot Tips</h2>
+<p>1. Use short upward drag movements.</p>
+<p>2. Practice in training mode.</p>
+<p>3. If aim goes above the head, lower sensitivity slightly.</p>
+<p>4. Keep your HUD comfortable.</p>
+</div>
+
+<footer>ONE TAP LAB | Fan-made Free Fire tool</footer>
+
+<script>
+let settings={};
+function generate(){
+let ram=document.getElementById('ram').value;
+let style=document.getElementById('style').value;
+let base=ram==='3 GB'? -8:ram==='4 GB'?-4:ram==='12 GB'?4:0;
+let extra=style==='fast'?7:style==='steady'?-7:0;
+settings={
+'General':Math.min(200,Math.max(70,184+base+extra)),
+'Red Dot':Math.min(200,Math.max(70,178+base+extra)),
+'2X Scope':Math.min(200,Math.max(70,168+base)),
+'4X Scope':Math.min(200,Math.max(70,156+base)),
+'Sniper Scope':Math.min(200,Math.max(70,92+base)),
+'Free Look':Math.min(200,Math.max(70,145+base))
+};
+document.getElementById('device').textContent='Device: '+(document.getElementById('phone').value||'Your phone');
+document.getElementById('values').innerHTML=Object.entries(settings).map(([k,v])=>'<div class="value">'+k+'<b>'+v+'</b></div>').join('');
+document.getElementById('result').style.display='block';
+}
+function copySettings(){
+let text=Object.entries(settings).map(([k,v])=>k+': '+v).join('\n');
+if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('Copied!')).catch(()=>alert(text));}
+else alert(text);
+}
+</script>
+</body>
+</html>
