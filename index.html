@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ONE TAP LAB</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b12;color:white;font-family:Arial;padding:18px}
+header{text-align:center;padding:20px}
+h1{color:#ff414b;font-size:34px}
+p{color:#aaa}
+.card{background:#171b28;border:1px solid #34394a;border-radius:16px;padding:20px;margin:18px auto;max-width:550px}
+h2{color:#ff555d}
+label{display:block;margin:14px 0 7px}
+input,select{width:100%;padding:13px;background:#090d17;color:white;border:1px solid #454b60;border-radius:9px;font-size:16px}
+button{background:#ff414b;color:white;border:0;padding:14px;border-radius:9px;font-weight:bold;width:100%;margin-top:18px;font-size:16px}
+.result{display:none;background:#252b3b;padding:15px;border-radius:10px;margin-top:15px}
+.value{font-size:28px;color:#ff555d;font-weight:bold}
+.note{font-size:13px;line-height:1.6}
+footer{text-align:center;color:#888;margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+<h1>ONE TAP LAB</h1>
+<p>BGMI Sensitivity • DPI • Fire Button Calculator</p>
+</header>
+
+<div class="card">
+<h2>🎯 Sensitivity Calculator</h2>
+<label>Play Style</label>
+<select id="style">
+<option value="1">Balanced</option>
+<option value="1.1">Aggressive</option>
+<option value="0.9">Stable Aim</option>
+</select>
+<label>Scope</label>
+<select id="scope">
+<option value="red">Red Dot</option>
+<option value="two">2x Scope</option>
+<option value="four">4x Scope</option>
+<option value="six">6x Scope</option>
+<option value="eight">8x Scope</option>
+</select>
+<button onclick="sensitivity()">Calculate Sensitivity</button>
+<div class="result" id="sensResult"></div>
+</div>
+
+<div class="card">
+<h2>📱 DPI Calculator</h2>
+<label>Your Current DPI</label>
+<input type="number" id="dpi" placeholder="Example: 400">
+<button onclick="calculateDPI()">Calculate DPI Suggestion</button>
+<div class="result" id="dpiResult"></div>
+</div>
+
+<div class="card">
+<h2>🔥 Fire Button Size</h2>
+<label>Finger Control</label>
+<select id="finger">
+<option value="2">2 Finger</option>
+<option value="3">3 Finger</option>
+<option value="4">4 Finger</option>
+</select>
+<label>Play Style</label>
+<select id="fireStyle">
+<option value="normal">Normal</option>
+<option value="claw">Claw / Fast</option>
+</select>
+<button onclick="fireButton()">Calculate Button Size</button>
+<div class="result" id="fireResult"></div>
+</div>
+
+<footer>
+<p>ONE TAP LAB | BGMI Gaming Tools</p>
+<p class="note">Suggestions are starting points. Adjust in training ground according to your device and comfort.</p>
+</footer>
+
+<script>
+function sensitivity(){
+ let s=Number(document.getElementById("style").value);
+ let scope=document.getElementById("scope").value;
+ let values={red:60,two:42,four:25,six:15,eight:10};
+ let v=Math.round(values[scope]*s);
+ let r=document.getElementById("sensResult");
+ r.style.display="block";
+ r.innerHTML="Suggested Sensitivity<br><span class='value'>"+v+"%</span>";
+}
+function calculateDPI(){
+ let d=Number(document.getElementById("dpi").value);
+ let r=document.getElementById("dpiResult");
+ r.style.display="block";
+ if(d<100||d>1000){
+ r.innerHTML="Enter a DPI between 100 and 1000.";
+ return;
+ }
+ r.innerHTML="Your current DPI: <span class='value'>"+d+"</span><br>Try changing DPI only in small steps. Keep your original value noted.";
+}
+function fireButton(){
+ let f=Number(document.getElementById("finger").value);
+ let style=document.getElementById("fireStyle").value;
+ let size=f===2?50:f===3?45:40;
+ if(style==="claw")size-=5;
+ let r=document.getElementById("fireResult");
+ r.style.display="block";
+ r.innerHTML="Suggested Fire Button Size<br><span class='value'>"+size+"%</span>";
+}
+</script>
+</body>
+</html>
